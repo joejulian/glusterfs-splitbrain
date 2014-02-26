@@ -1,4 +1,22 @@
 #!/bin/env python
+
+# This file is part of glusterfs-splitbrain
+#
+# glusterfs-splitbrain is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# glusterfs-splitbrain is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with glusterfs-splitbrain. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 2014, Joe Julian <me@joejulian.name>
+#
 import socket
 import sys
 from struct import pack,unpack
