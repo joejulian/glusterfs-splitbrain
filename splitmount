@@ -50,29 +50,37 @@ if __name__ == '__main__':
         print 'of that directory, or choose another directory.'
         exit(1)
 
-    orig_vol = fetchvol.fetch_volfile(server, volume)
+    orig_vol = rpc.fetchvol.fetch_volfile(server, volume)
     regex = re.compile(r'(^volume\s.+?end-volume)', re.VERBOSE|re.MULTILINE|re.DOTALL)
     graph = [ x.strip("\n") for x in regex.split(orig_vol) if x.strip("\n") ]
     newgraph = []
+    replicas = []
     for translator in graph:
-        if not "cluster/replicate" in translator:
-            newgraph.append(translator)
-        else:
-            replica = []
+        if "cluster/replicate" in translator:
+            for line in translator.split('\n'):
+                if 'subvolumes' in line:
+                    thesereplicas = line.strip(' ').split(' ')[1:]
+                    if len(replicas) == 0:
+                        replicas = thesereplicas
+                    else:
+                      replicas = [' '.join((x,y)) for x,y in zip(replicas, thesereplicas)]
+        elif "cluster/distribute" in translator:
+            distribute = []
             for line in translator.split('\n'):
                 if not 'subvolumes' in line:
-                    replica.append(line)
+                    distribute.append(line)
                 else:
-                    replica.append('    subvolumes {brick}')
-                    replicas = line.strip(' ').split(' ')[1:]
-            newgraph.append("\n".join(replica))
+                    distribute.append('    subvolumes {bricks}')
+            newgraph.append("\n".join(distribute))
+        else:
+            newgraph.append(translator)
 
     newgraph = "\n\n".join(newgraph)
     i=1
     for replica in replicas:
         tempfd,tempname = tempfile.mkstemp(dir=path)
         thisvolfile = os.fdopen(tempfd,"w")
-        thisvolfile.write(newgraph.format(brick = replica))
+        thisvolfile.write(newgraph.format(bricks = replica))
         thisvolfile.close()
         os.mkdir(os.path.join(path,'r{0}'.format(i)))
         subprocess.call(["/usr/sbin/glusterfs","-f",tempname,os.path.join(path,'r{0}'.format(i))])
