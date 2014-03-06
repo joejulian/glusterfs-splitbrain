@@ -23,9 +23,10 @@ import tempfile
 import subprocess
 
 def main():
+    me = os.path.basename(sys.argv[0])
     if len(sys.argv) <> 4:
         print
-        print 'Usage: {0} {{volfile server}} {{volume}} {{mount path}}'.format(sys.argv[0])
+        print 'Usage: {0} {{volfile server}} {{volume}} {{mount path}}'.format(me)
         print
         print "This mounts the split replicas into as many directories as your replica count, maintaining"
         print "consistency among distribute subvolumes. This allows you to compare versions across replica"
@@ -33,7 +34,7 @@ def main():
         print
         print "Example: for a 8x2 (8 brick replica 2) volume named foo partially hosted by server1:"
         print
-        print "\t%{0} server1 foo /root/sb_foo"
+        print "\t{0} server1 foo /root/sb_foo".format(me)
         print
         print "Would create the mount points, /root/sb_foo/r1 and /root/sb_foo/r2."
         print "From there you could remove the splitbrain file from under r1 or r2 as you"
