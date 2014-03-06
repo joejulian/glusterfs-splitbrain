@@ -22,8 +22,7 @@ import os,sys,re
 import tempfile
 import subprocess
 
-
-if __name__ == '__main__':
+def main():
     if len(sys.argv) <> 4:
         print
         print 'Usage: {0} {{volfile server}} {{volume}} {{mount path}}'.format(sys.argv[0])
@@ -86,3 +85,6 @@ if __name__ == '__main__':
         subprocess.call(["/usr/sbin/glusterfs","-f",tempname,os.path.join(path,'r{0}'.format(i))])
         i += 1
     print 'Your split replicas are mounted under {0}, in directories r1 through r{1}'.format(path,i-1)
+
+if __name__ == '__main__':
+  main()
