@@ -21,9 +21,6 @@ import socket
 import sys
 from struct import pack,unpack
 
-SERVER='ewcs2.ewcs.com'
-VOLUME='vmimages'
-
 DEFAULT_SERVER_PORT=24007
 GETSPEC=2
 AUTH_GLUSTERFS=390039
