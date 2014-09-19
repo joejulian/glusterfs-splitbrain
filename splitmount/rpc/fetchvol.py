@@ -64,7 +64,7 @@ def _build_rpc_fetch_volfile(volume):
     message += pack('!L',2) # second string length
     message += 'max-op-version'
     message += "\0"
-    message += '2'
+    message += '30600'
     message += "\0"
     message += pack('!L',0x0e)
     message += pack('!L',2)
