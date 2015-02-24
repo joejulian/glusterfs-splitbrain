@@ -17,7 +17,7 @@
 #
 # Copyright 2014, Joe Julian <me@joejulian.name>
 #
-import rpc.fetchvol
+import rpc
 import os,sys,re
 import tempfile
 import subprocess
@@ -50,7 +50,7 @@ def main():
         print 'of that directory, or choose another directory.'
         exit(1)
 
-    orig_vol = rpc.fetchvol.fetch_volfile(server, volume)
+    orig_vol = rpc.get_volfile(server, volume)
     regex = re.compile(r'(^volume\s.+?end-volume)', re.VERBOSE|re.MULTILINE|re.DOTALL)
     graph = [ x.strip("\n") for x in regex.split(orig_vol) if x.strip("\n") ]
     newgraph = []
