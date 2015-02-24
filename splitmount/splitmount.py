@@ -1,4 +1,4 @@
-#!/bin/env python
+#!env python
 
 # This file is part of glusterfs-splitbrain
 #
