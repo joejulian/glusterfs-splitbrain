@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "splitmount",
-    version = "0.0.1",
+    version = "0.1.0",
     author = "Joe Julian",
     author_email = "me@joejulian.name",
     description = ( "Admin tool to aid in the recovery of split-brain file entries in GlusterFS" ),
