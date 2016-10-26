@@ -81,13 +81,13 @@ if __name__ == "__main__":
     import sys
 
     try:
-        res = get_volfile(*sys.argv[1:3])
+        res = get_volfile(*sys.argv[1:3]).decode('utf-8')
     except:
-        print("fetching volfile failed for volume {} (volume not started?)".format(sys.argv[1:3]))
-        raise
+        print("Fetching volfile failed for volume {1} on server {0}. See gfapi.log.".format(*sys.argv[1:3]))
+        exit(1)
 
     try:
-        for line in res.decode('utf-8').split(u'\n'):
+        for line in res.split(u'\n'):
             print(line)
     except:
         print("bad return value {}".format(res))
