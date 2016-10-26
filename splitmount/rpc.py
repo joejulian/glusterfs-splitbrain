@@ -21,6 +21,7 @@
 
 import ctypes
 import ctypes.util
+import os
 import subprocess
 
 def cli_get_volfile (host, volume):
@@ -32,9 +33,11 @@ def api_get_volfile (host, volume):
     # This is set to a large value to exercise the "buffer not big enough"
     # path.  More realistically, you'd just start with a huge buffer.
     BUF_LEN = 0
-    fs = api.glfs_new(volume)
-    #api.glfs_set_logging(fs,"/dev/stderr",7)
-    api.glfs_set_volfile_server(fs,"tcp",host,24007)
+    logfile = str.encode(os.path.join(os.getcwd(),"gfapi.log"))
+    loglevel = 7 #debug
+    fs = api.glfs_new(str.encode(volume))
+    api.glfs_set_logging(fs, logfile, loglevel)
+    api.glfs_set_volfile_server(fs, str.encode("tcp"), str.encode(host),24007)
     api.glfs_init(fs)
     vbuf = ctypes.create_string_buffer(BUF_LEN)
     vlen = api.glfs_get_volfile(fs,vbuf,BUF_LEN)
@@ -49,11 +52,28 @@ def api_get_volfile (host, volume):
 
 api = ctypes.CDLL(ctypes.util.find_library("gfapi"))
 try:
+    api.glfs_new.argtypes=[ctypes.c_char_p]
+    api.glfs_new.restype = ctypes.c_void_p
+    api.glfs_set_logging.argtypes=[ctypes.c_void_p,
+                                   ctypes.c_char_p,
+                                   ctypes.c_int]
+    api.glfs_set_logging.restype = ctypes.c_int
     api.glfs_get_volfile.argtypes = [ctypes.c_void_p,
                                      ctypes.c_void_p,
                                      ctypes.c_ulong]
-    api.glfs_get_volfile.restype = ctypes.c_long;
+    api.glfs_get_volfile.restype = ctypes.c_long
     get_volfile = api_get_volfile
+    api.glfs_set_volfile_server.argtypes = [ctypes.c_void_p,
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+            ctypes.c_int]
+    api.glfs_set_volfile_server.restype = ctypes.c_int
+    api.glfs_init.argtypes = [ctypes.c_void_p]
+    api.glfs_init.restype = ctypes.c_int
+    api.glfs_fini.argtypes = [ctypes.c_void_p]
+    api.glfs_fini.restype = ctypes.c_int
+
+
 except:
     get_volfile = cli_get_volfile
 
@@ -61,14 +81,14 @@ if __name__ == "__main__":
     import sys
 
     try:
-        res = apply(get_volfile,sys.argv[1:3])
+        res = get_volfile(*sys.argv[1:3])
     except:
-        print "fetching volfile failed (volume not started?)"
+        print("fetching volfile failed for volume {} (volume not started?)".format(sys.argv[1:3]))
         raise
 
     try:
-        for line in res.split('\n'):
-            print line
+        for line in res.decode('utf-8').split(u'\n'):
+            print(line)
     except:
-        print "bad return value %s" % res
+        print("bad return value {}".format(res))
         raise
